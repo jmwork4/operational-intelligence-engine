@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from packages.common import AlertStatus, ResourceNotFoundError, utc_now
 from packages.db.models.alert import Alert
+from packages.domain.alert_service import AlertService
 from packages.schemas import AlertAcknowledge, AlertResponse, PaginatedResponse
 
 from apps.api.deps import RateLimiter, get_current_tenant, get_current_user, get_db
@@ -113,18 +114,12 @@ async def acknowledge_alert(
     user: dict = Depends(get_current_user),
 ) -> AlertResponse:
     """Acknowledge an alert."""
-    stmt = sa.select(Alert).where(Alert.id == alert_id, Alert.tenant_id == tenant_id)
-    result = await db.execute(stmt)
-    alert = result.scalar_one_or_none()
-
-    if alert is None:
-        raise ResourceNotFoundError("Alert", str(alert_id))
-
-    alert.status = AlertStatus.ACKNOWLEDGED
-    alert.acknowledged_by = UUID(str(user["user_id"]))
-    await db.commit()
-    await db.refresh(alert)
-
+    service = AlertService(db)
+    alert = await service.acknowledge_alert(
+        alert_id=alert_id,
+        tenant_id=tenant_id,
+        user_id=UUID(str(user["user_id"])),
+    )
     return AlertResponse.model_validate(alert)
 
 
@@ -139,16 +134,6 @@ async def resolve_alert(
     tenant_id: UUID = Depends(get_current_tenant),
 ) -> AlertResponse:
     """Resolve an alert."""
-    stmt = sa.select(Alert).where(Alert.id == alert_id, Alert.tenant_id == tenant_id)
-    result = await db.execute(stmt)
-    alert = result.scalar_one_or_none()
-
-    if alert is None:
-        raise ResourceNotFoundError("Alert", str(alert_id))
-
-    alert.status = AlertStatus.RESOLVED
-    alert.resolved_at = utc_now()
-    await db.commit()
-    await db.refresh(alert)
-
+    service = AlertService(db)
+    alert = await service.resolve_alert(alert_id=alert_id, tenant_id=tenant_id)
     return AlertResponse.model_validate(alert)

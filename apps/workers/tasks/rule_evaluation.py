@@ -23,25 +23,77 @@ async def evaluate_event_rules(ctx: dict, event_data: dict) -> dict:
     Returns:
         dict with evaluation results including matched rule count.
     """
-    event_id = event_data.get("id", "unknown")
+    event_id = event_data.get("event_id") or event_data.get("id", "unknown")
+    tenant_id = event_data.get("tenant_id", "unknown")
     logger.info("evaluate_event_rules_start", event_id=event_id)
 
     try:
-        # TODO: Load active event-triggered rules from database
-        # TODO: Match event fields against rule conditions
-        # TODO: For each matched rule, enqueue alert creation
+        from uuid import UUID
+        from packages.common import get_settings
+        from packages.db.session import get_async_session
+        from packages.rules.evaluator import RuleEvaluator
 
-        matched_rules = 0  # TODO: Replace with actual count
-        logger.info(
-            "evaluate_event_rules_complete",
-            event_id=event_id,
-            matched_rules=matched_rules,
-        )
+        settings = get_settings()
+
+        async for session in get_async_session():
+            evaluator = RuleEvaluator(
+                session=session,
+                redis_url=settings.REDIS_URL,
+            )
+            triggered = await evaluator.evaluate_event_rules(
+                event_data=event_data,
+                tenant_id=UUID(str(tenant_id)),
+            )
+
+            matched_rules = len(triggered)
+            logger.info(
+                "evaluate_event_rules_complete",
+                event_id=event_id,
+                matched_rules=matched_rules,
+            )
+
+            # Enqueue alert creation for each triggered rule
+            for rule_result in triggered:
+                try:
+                    from arq import create_pool
+                    from arq.connections import RedisSettings
+
+                    pool = await create_pool(
+                        RedisSettings.from_dsn(settings.REDIS_URL)
+                    )
+                    await pool.enqueue_job(
+                        "create_alert",
+                        {
+                            "rule_id": rule_result["rule_id"],
+                            "rule_name": rule_result["rule_name"],
+                            "severity": rule_result["severity"],
+                            "action_type": rule_result["action_type"],
+                            "tenant_id": str(tenant_id),
+                            "event_id": str(event_id),
+                            "event_type": event_data.get("event_type"),
+                            "entity_type": event_data.get("entity_type"),
+                            "entity_id": event_data.get("entity_id"),
+                        },
+                    )
+                    await pool.close()
+                except Exception:
+                    logger.exception(
+                        "alert_enqueue_failed",
+                        rule_id=rule_result["rule_id"],
+                    )
+
+            return {
+                "status": "evaluated",
+                "event_id": event_id,
+                "matched_rules": matched_rules,
+                "triggered": triggered,
+            }
 
         return {
-            "status": "evaluated",
+            "status": "error",
             "event_id": event_id,
-            "matched_rules": matched_rules,
+            "matched_rules": 0,
+            "error": "No session available",
         }
 
     except Exception:
@@ -69,23 +121,65 @@ async def evaluate_threshold_rules(
     logger.info("evaluate_threshold_rules_start", rule_ids=rule_ids)
 
     try:
-        # TODO: Load threshold rules (all active or filtered by rule_ids)
-        # TODO: Query aggregated metrics for each rule's time window
-        # TODO: Compare metric values against rule thresholds
-        # TODO: Enqueue alert creation for triggered rules
+        from uuid import UUID
+        from packages.common import get_settings
+        from packages.db.session import get_async_session
+        from packages.rules.evaluator import RuleEvaluator
 
-        evaluated = 0  # TODO: Replace with actual count
-        triggered = 0  # TODO: Replace with actual count
-        logger.info(
-            "evaluate_threshold_rules_complete",
-            evaluated=evaluated,
-            triggered=triggered,
-        )
+        settings = get_settings()
+
+        async for session in get_async_session():
+            evaluator = RuleEvaluator(
+                session=session,
+                redis_url=settings.REDIS_URL,
+            )
+
+            uuid_rule_ids = (
+                [UUID(rid) for rid in rule_ids] if rule_ids else None
+            )
+
+            triggered = await evaluator.evaluate_threshold_rules(
+                rule_ids=uuid_rule_ids,
+            )
+
+            evaluated = len(uuid_rule_ids) if uuid_rule_ids else 0
+            triggered_count = len(triggered)
+
+            # Enqueue alerts for triggered threshold rules
+            for rule_result in triggered:
+                try:
+                    from arq import create_pool
+                    from arq.connections import RedisSettings
+
+                    pool = await create_pool(
+                        RedisSettings.from_dsn(settings.REDIS_URL)
+                    )
+                    await pool.enqueue_job("create_alert", rule_result)
+                    await pool.close()
+                except Exception:
+                    logger.exception(
+                        "threshold_alert_enqueue_failed",
+                        rule_id=rule_result.get("rule_id"),
+                    )
+
+            logger.info(
+                "evaluate_threshold_rules_complete",
+                evaluated=evaluated,
+                triggered=triggered_count,
+            )
+
+            return {
+                "status": "evaluated",
+                "rules_evaluated": evaluated,
+                "rules_triggered": triggered_count,
+                "triggered": triggered,
+            }
 
         return {
-            "status": "evaluated",
-            "rules_evaluated": evaluated,
-            "rules_triggered": triggered,
+            "status": "error",
+            "rules_evaluated": 0,
+            "rules_triggered": 0,
+            "error": "No session available",
         }
 
     except Exception:
@@ -114,23 +208,65 @@ async def evaluate_composite_rules(
     logger.info("evaluate_composite_rules_start", rule_ids=rule_ids)
 
     try:
-        # TODO: Load composite rules (all active or filtered by rule_ids)
-        # TODO: Evaluate each sub-condition independently
-        # TODO: Combine sub-condition results with boolean logic (AND/OR/NOT)
-        # TODO: Enqueue alert creation for triggered rules
+        from uuid import UUID
+        from packages.common import get_settings
+        from packages.db.session import get_async_session
+        from packages.rules.evaluator import RuleEvaluator
 
-        evaluated = 0  # TODO: Replace with actual count
-        triggered = 0  # TODO: Replace with actual count
-        logger.info(
-            "evaluate_composite_rules_complete",
-            evaluated=evaluated,
-            triggered=triggered,
-        )
+        settings = get_settings()
+
+        async for session in get_async_session():
+            evaluator = RuleEvaluator(
+                session=session,
+                redis_url=settings.REDIS_URL,
+            )
+
+            uuid_rule_ids = (
+                [UUID(rid) for rid in rule_ids] if rule_ids else None
+            )
+
+            triggered = await evaluator.evaluate_composite_rules(
+                rule_ids=uuid_rule_ids,
+            )
+
+            evaluated = len(uuid_rule_ids) if uuid_rule_ids else 0
+            triggered_count = len(triggered)
+
+            # Enqueue alerts for triggered composite rules
+            for rule_result in triggered:
+                try:
+                    from arq import create_pool
+                    from arq.connections import RedisSettings
+
+                    pool = await create_pool(
+                        RedisSettings.from_dsn(settings.REDIS_URL)
+                    )
+                    await pool.enqueue_job("create_alert", rule_result)
+                    await pool.close()
+                except Exception:
+                    logger.exception(
+                        "composite_alert_enqueue_failed",
+                        rule_id=rule_result.get("rule_id"),
+                    )
+
+            logger.info(
+                "evaluate_composite_rules_complete",
+                evaluated=evaluated,
+                triggered=triggered_count,
+            )
+
+            return {
+                "status": "evaluated",
+                "rules_evaluated": evaluated,
+                "rules_triggered": triggered_count,
+                "triggered": triggered,
+            }
 
         return {
-            "status": "evaluated",
-            "rules_evaluated": evaluated,
-            "rules_triggered": triggered,
+            "status": "error",
+            "rules_evaluated": 0,
+            "rules_triggered": 0,
+            "error": "No session available",
         }
 
     except Exception:

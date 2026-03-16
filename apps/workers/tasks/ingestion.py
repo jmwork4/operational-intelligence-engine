@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+
 try:
     import structlog
     logger = structlog.get_logger(__name__)
@@ -13,28 +15,43 @@ except ImportError:
 async def process_event(ctx: dict, event_data: dict) -> dict:
     """Process a single ingested event.
 
-    Validates, normalises, and persists an incoming event, then triggers
-    downstream rule evaluation.
+    Creates an EventProcessor and delegates to it. The processor handles
+    loading the event from the database, appending to the Redis stream,
+    evaluating matching rules, and enqueueing alert creation.
 
     Args:
         ctx: ARQ context containing redis connection and shared resources.
-        event_data: Raw event payload to process.
+        event_data: Raw event payload containing at minimum ``event_id``
+            and ``tenant_id``.
 
     Returns:
         dict with processing result and the assigned event ID.
     """
-    logger.info("process_event_start", event_type=event_data.get("type"))
+    event_id = event_data.get("event_id") or event_data.get("id", "unknown")
+    tenant_id = event_data.get("tenant_id", "unknown")
+    logger.info("process_event_start", event_id=event_id, tenant_id=tenant_id)
 
     try:
-        # TODO: Validate event schema
-        # TODO: Normalise event fields (timestamps, identifiers, etc.)
-        # TODO: Persist event to database
-        # TODO: Enqueue rule evaluation for the new event
+        from uuid import UUID
+        from packages.common import get_settings
+        from packages.db.session import get_async_session
+        from packages.events.processor import EventProcessor
 
-        event_id = event_data.get("id", "unknown")
-        logger.info("process_event_complete", event_id=event_id)
+        settings = get_settings()
 
-        return {"status": "processed", "event_id": event_id}
+        async for session in get_async_session():
+            processor = EventProcessor(
+                session=session,
+                redis_url=settings.REDIS_URL,
+            )
+            result = await processor.process_event(
+                event_id=UUID(str(event_id)),
+                tenant_id=UUID(str(tenant_id)),
+            )
+            logger.info("process_event_complete", event_id=event_id, result=result)
+            return result
+
+        return {"status": "error", "event_id": event_id, "error": "No session available"}
 
     except Exception:
         logger.exception("process_event_failed", event_data=event_data)
@@ -58,15 +75,17 @@ async def batch_process_events(ctx: dict, events: list[dict]) -> dict:
 
     processed = 0
     failed = 0
+    results: list[dict] = []
 
     for event_data in events:
         try:
-            await process_event(ctx, event_data)
+            result = await process_event(ctx, event_data)
+            results.append(result)
             processed += 1
         except Exception:
             logger.exception(
                 "batch_event_failed",
-                event_id=event_data.get("id", "unknown"),
+                event_id=event_data.get("event_id", event_data.get("id", "unknown")),
             )
             failed += 1
 
@@ -76,4 +95,9 @@ async def batch_process_events(ctx: dict, events: list[dict]) -> dict:
         failed=failed,
     )
 
-    return {"status": "completed", "processed": processed, "failed": failed}
+    return {
+        "status": "completed",
+        "processed": processed,
+        "failed": failed,
+        "results": results,
+    }

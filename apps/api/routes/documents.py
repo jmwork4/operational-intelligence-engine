@@ -71,8 +71,19 @@ async def upload_document(
     await db.commit()
     await db.refresh(doc)
 
-    # TODO: enqueue embedding job via ARQ
-    # await arq_pool.enqueue_job("process_document", str(doc.id))
+    # Enqueue embedding generation via ARQ
+    try:
+        from arq import create_pool
+        from arq.connections import RedisSettings
+
+        arq_pool = await create_pool(RedisSettings.from_dsn(settings.REDIS_URL))
+        await arq_pool.enqueue_job(
+            "generate_embeddings",
+            {"document_id": str(doc.id), "tenant_id": str(tenant_id)},
+        )
+        await arq_pool.close()
+    except Exception:
+        pass  # Worker will pick it up on next sweep if enqueue fails
 
     return DocumentResponse.model_validate(doc)
 
@@ -181,15 +192,14 @@ async def semantic_search(
     db: AsyncSession = Depends(get_db),
     tenant_id: UUID = Depends(get_current_tenant),
 ) -> list[SemanticSearchResult]:
-    """Perform a semantic search across document embeddings.
+    """Perform a semantic search across document embeddings using pgvector."""
+    from packages.domain.semantic_search import SemanticSearch
 
-    This is a placeholder that will be replaced with a proper vector similarity
-    search once the embedding pipeline is fully wired.
-    """
-    # TODO: implement actual vector similarity search using pgvector
-    # For now, return an empty list.  The full implementation would:
-    # 1. Embed the query text using the same model used for documents
-    # 2. Run a cosine similarity query against the embeddings table
-    # 3. Join with document_chunks and documents for metadata
-    # 4. Filter by tenant_id and similarity_threshold
-    return []
+    search_service = SemanticSearch(db)
+    results = await search_service.search(
+        query=body.query,
+        tenant_id=tenant_id,
+        limit=body.limit,
+        similarity_threshold=body.similarity_threshold,
+    )
+    return [SemanticSearchResult(**r) for r in results]

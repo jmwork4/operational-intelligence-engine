@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+import logging
 from uuid import UUID
 
 import sqlalchemy as sa
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from packages.common import ResourceNotFoundError, utc_now
+from packages.common import ResourceNotFoundError, get_settings, utc_now
 from packages.db.models.event import Event
 from packages.schemas import (
     EventBatchCreate,
@@ -19,6 +20,8 @@ from packages.schemas import (
 )
 
 from apps.api.deps import RateLimiter, get_current_tenant, get_db
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/events", tags=["Events"])
 
@@ -54,8 +57,20 @@ async def ingest_event(
     await db.commit()
     await db.refresh(event)
 
-    # TODO: enqueue event to ARQ for async rule evaluation
-    # await arq_pool.enqueue_job("process_event", str(event.id))
+    # Enqueue event for async processing (stream + rule evaluation)
+    try:
+        from arq import create_pool
+        from arq.connections import RedisSettings
+
+        settings = get_settings()
+        arq_pool = await create_pool(RedisSettings.from_dsn(settings.REDIS_URL))
+        await arq_pool.enqueue_job(
+            "process_event",
+            {"event_id": str(event.id), "tenant_id": str(tenant_id)},
+        )
+        await arq_pool.close()
+    except Exception:
+        logger.warning("Failed to enqueue process_event job for event %s", event.id)
 
     return EventResponse.model_validate(event)
 
@@ -96,7 +111,21 @@ async def ingest_event_batch(
     for ev in events:
         await db.refresh(ev)
 
-    # TODO: enqueue batch to ARQ for async rule evaluation
+    # Enqueue each event for async processing
+    try:
+        from arq import create_pool
+        from arq.connections import RedisSettings
+
+        settings = get_settings()
+        arq_pool = await create_pool(RedisSettings.from_dsn(settings.REDIS_URL))
+        for ev in events:
+            await arq_pool.enqueue_job(
+                "process_event",
+                {"event_id": str(ev.id), "tenant_id": str(tenant_id)},
+            )
+        await arq_pool.close()
+    except Exception:
+        logger.warning("Failed to enqueue batch process_event jobs")
 
     return [EventResponse.model_validate(ev) for ev in events]
 
