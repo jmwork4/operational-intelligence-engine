@@ -1,0 +1,24 @@
+[project]
+name = "oie-scheduler"
+version = "0.1.0"
+description = "OIE scheduled task runner with APScheduler"
+requires-python = ">=3.12"
+license = { text = "Proprietary" }
+dependencies = [
+    "apscheduler>=3.10",
+    "sqlalchemy",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio",
+    "ruff",
+]
+
+[build-system]
+requires = ["setuptools>=69.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]

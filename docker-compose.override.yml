@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      target: development
+    volumes:
+      - ./apps/api:/app/apps/api
+      - ./packages:/app/packages
+    command: uvicorn apps.api.main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      ENVIRONMENT: dev
+      LOG_LEVEL: DEBUG
+    ports:
+      - "8000:8000"
+      - "5678:5678"
+
+  workers:
+    build:
+      target: development
+    volumes:
+      - ./apps/workers:/app/apps/workers
+      - ./packages:/app/packages
+    environment:
+      ENVIRONMENT: dev
+      LOG_LEVEL: DEBUG
+    ports:
+      - "5679:5678"
+
+  scheduler:
+    build:
+      target: development
+    volumes:
+      - ./apps/scheduler:/app/apps/scheduler
+      - ./packages:/app/packages
+    environment:
+      ENVIRONMENT: dev
+      LOG_LEVEL: DEBUG
+    ports:
+      - "5680:5678"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: oie-pgadmin
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@oie.local
+      PGADMIN_DEFAULT_PASSWORD: admin
+    depends_on:
+      - postgres
+    networks:
+      - oie-network
+
+  redis-commander:
+    image: rediscommander/redis-commander
+    container_name: oie-redis-commander
+    ports:
+      - "8081:8081"
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    depends_on:
+      - redis
+    networks:
+      - oie-network

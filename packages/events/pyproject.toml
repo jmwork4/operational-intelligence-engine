@@ -1,0 +1,24 @@
+[project]
+name = "oie-events"
+version = "0.1.0"
+description = "OIE event sourcing and domain event infrastructure"
+requires-python = ">=3.12"
+license = { text = "Proprietary" }
+dependencies = [
+    "oie-common",
+    "oie-db",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio",
+    "ruff",
+]
+
+[build-system]
+requires = ["setuptools>=69.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]

@@ -1,0 +1,26 @@
+[project]
+name = "oie-db"
+version = "0.1.0"
+description = "OIE database layer with SQLAlchemy, Alembic, and pgvector support"
+requires-python = ">=3.12"
+license = { text = "Proprietary" }
+dependencies = [
+    "sqlalchemy[asyncio]>=2.0",
+    "asyncpg",
+    "alembic",
+    "pgvector",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio",
+    "ruff",
+]
+
+[build-system]
+requires = ["setuptools>=69.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]

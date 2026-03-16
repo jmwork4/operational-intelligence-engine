@@ -1,0 +1,25 @@
+[project]
+name = "oie-ai"
+version = "0.1.0"
+description = "OIE AI/ML integrations with Anthropic and embedding utilities"
+requires-python = ">=3.12"
+license = { text = "Proprietary" }
+dependencies = [
+    "anthropic",
+    "tiktoken",
+    "numpy",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio",
+    "ruff",
+]
+
+[build-system]
+requires = ["setuptools>=69.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
