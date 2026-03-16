@@ -1,24 +1,19 @@
-"""AI routes — natural-language query interface."""
+"""AI routes — natural-language query interface and telemetry."""
 
 from __future__ import annotations
 
-import time
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from packages.ai import (
-    ContextAssembler,
-    InputPolicyGuard,
-    OutputPolicyGuard,
-    PromptRegistry,
-)
-from packages.common import PolicyViolationError, generate_uuid, get_settings
+from packages.ai import AIService
+from packages.common import PolicyViolationError, get_settings
 from packages.schemas import (
     AIQueryRequest,
     AIQueryResponse,
     AITelemetrySummary,
+    SourceReference,
 )
 
 from apps.api.deps import RateLimiter, get_current_tenant, get_db
@@ -37,93 +32,94 @@ async def ai_query(
     db: AsyncSession = Depends(get_db),
     tenant_id: UUID = Depends(get_current_tenant),
 ) -> AIQueryResponse:
-    """Submit a natural-language query to the AI engine.
+    """Submit a natural-language query to the AI copilot.
 
-    Pipeline:
-    1. Run InputPolicyGuard on the user query.
-    2. Fetch the active prompt from PromptRegistry.
-    3. Assemble a token-budgeted context via ContextAssembler.
-    4. Invoke the model (placeholder).
-    5. Run OutputPolicyGuard on the generated response.
-    6. Return the response with telemetry.
+    Full pipeline: InputPolicyGuard -> PromptRegistry -> SemanticSearch ->
+    ContextAssembly -> ModelRouter -> Anthropic API (with tool use) ->
+    OutputPolicyGuard -> Telemetry -> Response.
     """
     settings = get_settings()
-    start_time = time.perf_counter()
 
-    # --- 1. Input policy guard -------------------------------------------
-    input_guard = InputPolicyGuard()
-    input_result = await input_guard.check(body.query, tenant_id)
-    if not input_result.allowed:
-        raise PolicyViolationError(
-            message=f"Input policy violation: {'; '.join(input_result.violations)}",
-            violation_type="input",
-        )
-
-    # --- 2. Fetch active prompt ------------------------------------------
-    registry = PromptRegistry(session=db)
-    try:
-        prompt = await registry.get_active_prompt(
-            task_type="general_query",
-            model_family=settings.DEFAULT_MODEL_PROVIDER,
-        )
-    except ValueError:
-        # Fallback system prompt when no prompt is registered yet.
-        prompt = {
-            "system_prompt": (
-                "You are an operational intelligence assistant. "
-                "Answer questions about logistics, supply-chain events, and "
-                "alerts using the provided context."
-            ),
-            "user_template": "{query}",
-        }
-
-    # --- 3. Context assembly ---------------------------------------------
-    assembler = ContextAssembler(max_tokens=settings.MAX_CONTEXT_TOKENS)
-    conversation_history: list[dict] = []
-    knowledge_chunks: list[dict] = []
-
-    # TODO: retrieve conversation history from DB if conversation_id provided
-    # TODO: run semantic search to populate knowledge_chunks
-
-    assembled = await assembler.assemble(
-        system_prompt=prompt["system_prompt"],
-        conversation_history=conversation_history,
-        knowledge_chunks=knowledge_chunks,
+    ai_service = AIService(db=db, settings=settings)
+    result = await ai_service.query(
+        query=body.query,
+        tenant_id=tenant_id,
+        conversation_id=body.conversation_id,
+        context_filter=body.context_filter,
     )
 
-    # --- 4. Model invocation (placeholder) --------------------------------
-    # TODO: replace with actual model call via ModelRouter
-    model_response_text = (
-        "This is a placeholder response. The AI model integration is pending. "
-        "Your query was: " + body.query
-    )
-    input_tokens = assembled.total_tokens
-    output_tokens = len(model_response_text) // 4
-
-    # --- 5. Output policy guard ------------------------------------------
-    output_guard = OutputPolicyGuard()
-    output_result = await output_guard.check(model_response_text)
-    if not output_result.allowed:
-        raise PolicyViolationError(
-            message=f"Output policy violation: {'; '.join(output_result.violations)}",
-            violation_type="output",
-        )
-
-    # --- 6. Build response -----------------------------------------------
-    elapsed_ms = (time.perf_counter() - start_time) * 1000.0
-
-    conversation_id = body.conversation_id or str(generate_uuid())
+    # Map result to response schema
+    sources = [
+        SourceReference(**s) for s in result.get("sources", [])
+    ]
+    telemetry = result.get("telemetry", {})
 
     return AIQueryResponse(
-        response=model_response_text,
-        sources=[],
-        conversation_id=conversation_id,
+        response=result["response"],
+        sources=sources,
+        conversation_id=result.get("conversation_id", ""),
         telemetry=AITelemetrySummary(
-            model_provider=settings.DEFAULT_MODEL_PROVIDER,
-            model_name=settings.DEFAULT_MODEL_NAME,
-            input_tokens=input_tokens,
-            output_tokens=output_tokens,
-            latency_ms=round(elapsed_ms, 2),
-            tools_used=[],
+            model_provider=telemetry.get("model_provider", settings.DEFAULT_MODEL_PROVIDER),
+            model_name=telemetry.get("model_name", settings.DEFAULT_MODEL_NAME),
+            input_tokens=telemetry.get("input_tokens", 0),
+            output_tokens=telemetry.get("output_tokens", 0),
+            latency_ms=telemetry.get("latency_ms", 0),
+            tools_used=telemetry.get("tools_used", []),
         ),
     )
+
+
+@router.get(
+    "/telemetry",
+    dependencies=[Depends(RateLimiter(requests_per_minute=60))],
+)
+async def get_ai_telemetry(
+    hours: int = Query(default=24, ge=1, le=168),
+    tenant_id: UUID = Depends(get_current_tenant),
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """Get AI telemetry metrics for the specified time range.
+
+    Returns aggregated stats on model usage, token consumption, latency,
+    tool invocations, and policy guard results.
+    """
+    # Return mock telemetry data for now — will be populated from
+    # the ai_telemetry table once recording is fully wired.
+    return {
+        "time_range_hours": hours,
+        "tenant_id": str(tenant_id),
+        "summary": {
+            "total_queries": 284,
+            "avg_latency_ms": 3200,
+            "total_input_tokens": 892_400,
+            "total_output_tokens": 245_600,
+            "avg_context_utilization_pct": 62.4,
+        },
+        "by_model": {
+            "claude-sonnet-4-20250514": {
+                "queries": 284,
+                "avg_latency_ms": 3200,
+                "input_tokens": 892_400,
+                "output_tokens": 245_600,
+            }
+        },
+        "tool_usage": {
+            "total_invocations": 412,
+            "failures": 3,
+            "by_tool": {
+                "sql__query_events": 156,
+                "sql__get_event_stats": 89,
+                "file__search_documents": 78,
+                "workflow__get_alert_summary": 62,
+                "observability__get_system_health": 27,
+            },
+        },
+        "policy_guard": {
+            "input_checks": 284,
+            "input_violations": 2,
+            "output_checks": 282,
+            "output_violations": 0,
+            "avg_input_risk_score": 0.05,
+            "avg_output_risk_score": 0.02,
+        },
+    }

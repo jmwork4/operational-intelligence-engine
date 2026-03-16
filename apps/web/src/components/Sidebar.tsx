@@ -9,6 +9,7 @@ import {
   Bell,
   FileText,
   Sparkles,
+  BarChart3,
   Settings,
 } from "lucide-react";
 import clsx from "clsx";
@@ -20,6 +21,7 @@ const navItems = [
   { label: "Alerts", icon: Bell, href: "/alerts" },
   { label: "Documents", icon: FileText, href: "/documents" },
   { label: "AI Copilot", icon: Sparkles, href: "/ai-copilot" },
+  { label: "AI Observability", icon: BarChart3, href: "/ai-observability" },
   { label: "Settings", icon: Settings, href: "/settings" },
 ];
 

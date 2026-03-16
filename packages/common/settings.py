@@ -35,6 +35,7 @@ class Settings(BaseSettings):
     DEFAULT_MODEL_PROVIDER: str = "anthropic"
     DEFAULT_MODEL_NAME: str = "claude-sonnet-4-20250514"
     MAX_CONTEXT_TOKENS: int = 128000
+    ANTHROPIC_API_KEY: str | None = None
 
     # Rate Limiting (requests per minute, per tenant)
     RATE_LIMIT_BASIC: int = 60
