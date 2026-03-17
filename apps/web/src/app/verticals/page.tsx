@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Truck, Heart, Factory, Thermometer, Check, ChevronDown, ChevronUp } from "lucide-react";
+import { Truck, Heart, Factory, Thermometer, Check, ChevronDown, ChevronUp, UtensilsCrossed, ShoppingBag, ChefHat } from "lucide-react";
 
 const verticals = [
   {
@@ -78,6 +78,63 @@ const verticals = [
       "8 rules: temp thresholds, excursion duration, calibration, compliance",
       "3 AI prompts: cold chain query, excursion analysis, compliance report",
       "Dashboard: compliance rate, excursions, avg temperature, sensors",
+    ],
+  },
+  {
+    name: "food_beverage",
+    displayName: "Food & Beverage",
+    description:
+      "Food safety and quality operations — temperature monitoring, FSMA compliance, supplier quality, shelf life management, and waste tracking.",
+    icon: UtensilsCrossed,
+    color: "text-amber-600",
+    bg: "bg-amber-50",
+    border: "border-amber-200",
+    eventTypes: 15,
+    ruleTemplates: 12,
+    promptTemplates: 3,
+    highlights: [
+      "15 event types: temperature, humidity, supplier, quality, contamination, waste",
+      "12 rules: cold storage excursion, FSMA compliance, contamination, shelf life",
+      "3 AI prompts: food safety query, supply chain analysis, compliance report",
+      "Dashboard: active excursions, compliance score, waste rate, supplier on-time %",
+    ],
+  },
+  {
+    name: "merchandise_supply_chain",
+    displayName: "Merchandise Supply Chain",
+    description:
+      "Global merchandise supply chain — container tracking, customs clearance, vendor management, inventory allocation, and demand planning.",
+    icon: ShoppingBag,
+    color: "text-indigo-600",
+    bg: "bg-indigo-50",
+    border: "border-indigo-200",
+    eventTypes: 15,
+    ruleTemplates: 12,
+    promptTemplates: 3,
+    highlights: [
+      "15 event types: containers, customs, vendor shipments, DC receiving, allocation",
+      "12 rules: port dwell, customs hold, vendor reliability, stockout risk, seasonal deadline",
+      "3 AI prompts: supply chain query, vendor evaluation, demand planning",
+      "Dashboard: containers in transit, vendor on-time %, allocation completion, stockout risk",
+    ],
+  },
+  {
+    name: "restaurant_ops",
+    displayName: "Restaurant Operations",
+    description:
+      "Multi-location restaurant operations — food safety, equipment monitoring, drive-thru performance, labor management, and health compliance.",
+    icon: ChefHat,
+    color: "text-orange-600",
+    bg: "bg-orange-50",
+    border: "border-orange-200",
+    eventTypes: 15,
+    ruleTemplates: 12,
+    promptTemplates: 3,
+    highlights: [
+      "15 event types: cooler/freezer temps, fryer oil, drive-thru, POS, labor, complaints",
+      "12 rules: cooler excursion, health inspection, drive-thru time, complaint spike",
+      "3 AI prompts: restaurant ops query, location analysis, health compliance",
+      "Dashboard: locations compliant, avg drive-thru time, food cost %, equipment uptime",
     ],
   },
 ];

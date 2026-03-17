@@ -68,6 +68,3 @@ def _ensure_loaded() -> None:
     import packages.verticals.healthcare  # noqa: F401
     import packages.verticals.manufacturing  # noqa: F401
     import packages.verticals.cold_chain  # noqa: F401
-    import packages.verticals.food_beverage  # noqa: F401
-    import packages.verticals.merchandise_supply_chain  # noqa: F401
-    import packages.verticals.restaurant_ops  # noqa: F401

@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Operational Intelligence Engine — AI-Powered Operational Monitoring</title>
+  <meta name="description" content="AI-powered operational monitoring that turns event chaos into actionable intelligence. Built for logistics, healthcare, manufacturing, and beyond.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0a0f1e;
+      --navy-light: #111827;
+      --teal: #0d4f4f;
+      --teal-light: #14b8a6;
+      --teal-glow: #10ebd0;
+      --accent: #06d6a0;
+      --white: #ffffff;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --text-light: #e5e7eb;
+      --card-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+      --card-shadow-hover: 0 4px 12px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.08);
+      --card-radius: 12px;
+      --section-padding: 100px 0;
+      --container-width: 1200px;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: var(--container-width);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ===================== NAVIGATION ===================== */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 16px 0;
+      transition: all 0.3s ease;
+      background: rgba(10, 15, 30, 0.4);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .nav.scrolled {
+      background: rgba(10, 15, 30, 0.95);
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--white);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--teal-light), var(--accent));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
+      letter-spacing: -0.01em;
+    }
+
+    .nav-links a:hover {
+      color: var(--white);
+    }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+
+    .nav-hamburger span {
+      width: 22px;
+      height: 2px;
+      background: var(--white);
+      border-radius: 1px;
+      transition: all 0.3s ease;
+    }
+
+    /* ===================== HERO ===================== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: linear-gradient(160deg, var(--navy) 0%, #091428 30%, #0a2e3e 60%, var(--teal) 100%);
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 30% 50%, rgba(13, 79, 79, 0.3) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 50%, rgba(6, 214, 160, 0.08) 0%, transparent 50%);
+      animation: heroShift 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroShift {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(-2%, 1%) scale(1.02); }
+      66% { transform: translate(1%, -1%) scale(0.99); }
+      100% { transform: translate(-1%, 2%) scale(1.01); }
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 820px;
+      padding: 0 24px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 100px;
+      padding: 8px 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--teal-glow);
+      margin-bottom: 32px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--teal-glow);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--teal-glow);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.85); }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 5.5vw, 4.2rem);
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--teal-light), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: clamp(1.05rem, 2vw, 1.25rem);
+      color: rgba(255,255,255,0.65);
+      max-width: 640px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+      font-weight: 400;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      border: none;
+      letter-spacing: -0.01em;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--teal-light), var(--accent));
+      color: var(--navy);
+      box-shadow: 0 4px 16px rgba(6, 214, 160, 0.25);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(6, 214, 160, 0.35);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.08);
+      color: var(--white);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.14);
+      transform: translateY(-2px);
+    }
+
+    .trust-badges {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,0.45);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .trust-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--teal-light);
+      border-radius: 50%;
+      opacity: 0.7;
+    }
+
+    /* ===================== SECTIONS ===================== */
+    .section {
+      padding: var(--section-padding);
+    }
+
+    .section-white {
+      background: var(--white);
+    }
+
+    .section-gray {
+      background: var(--gray-50);
+    }
+
+    .section-dark {
+      background: var(--navy-light);
+      color: var(--text-light);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .section-header h2 {
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+      line-height: 1.15;
+    }
+
+    .section-header p {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .section-dark .section-header p {
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* ===================== CARDS ===================== */
+    .card-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .card-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .card-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--card-radius);
+      padding: 36px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--gray-200);
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    .card-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, rgba(20,184,166,0.1), rgba(6,214,160,0.1));
+    }
+
+    .card h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .card p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    /* Problem cards red accent */
+    .problem-card .card-icon {
+      background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(249,115,22,0.1));
+    }
+
+    /* ===================== ARCHITECTURE ===================== */
+    .arch-diagram {
+      background: var(--navy);
+      border-radius: 16px;
+      padding: 48px 32px;
+      margin-bottom: 48px;
+      overflow-x: auto;
+    }
+
+    .arch-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .arch-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .arch-connector {
+      text-align: center;
+      color: rgba(255,255,255,0.3);
+      font-size: 1.2rem;
+      margin: 4px 0;
+      letter-spacing: 4px;
+    }
+
+    .arch-box {
+      padding: 12px 22px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-align: center;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+      border: 1px solid;
+    }
+
+    .arch-frontend {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: rgba(99, 102, 241, 0.3);
+      color: #a5b4fc;
+    }
+
+    .arch-api {
+      background: rgba(20, 184, 166, 0.15);
+      border-color: rgba(20, 184, 166, 0.3);
+      color: #5eead4;
+    }
+
+    .arch-worker {
+      background: rgba(249, 115, 22, 0.15);
+      border-color: rgba(249, 115, 22, 0.3);
+      color: #fdba74;
+    }
+
+    .arch-data {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: rgba(59, 130, 246, 0.3);
+      color: #93c5fd;
+    }
+
+    .arch-ai {
+      background: rgba(168, 85, 247, 0.15);
+      border-color: rgba(168, 85, 247, 0.3);
+      color: #c4b5fd;
+    }
+
+    .arch-label {
+      color: rgba(255,255,255,0.35);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .metric-card {
+      text-align: center;
+      background: var(--white);
+      border-radius: var(--card-radius);
+      padding: 36px 24px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--gray-200);
+    }
+
+    .metric-value {
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      background: linear-gradient(135deg, var(--teal-light), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+
+    .metric-label {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* ===================== SECURITY ===================== */
+    .security-list {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .security-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--card-radius);
+      padding: 24px 28px;
+      transition: all 0.3s ease;
+    }
+
+    .security-item:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(20,184,166,0.2);
+      transform: translateY(-2px);
+    }
+
+    .security-check {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      background: rgba(6,214,160,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .security-item p {
+      color: rgba(255,255,255,0.75);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .security-item strong {
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    /* ===================== MARKET ===================== */
+    .market-stat {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    .market-stat .metric-value {
+      font-size: 4rem;
+      margin-bottom: 8px;
+    }
+
+    .market-stat .metric-label {
+      font-size: 1.1rem;
+    }
+
+    /* ===================== PRICING ===================== */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .pricing-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 40px 32px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--gray-200);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    .pricing-card.featured {
+      border: 2px solid var(--teal-light);
+      box-shadow: 0 4px 24px rgba(20,184,166,0.15);
+      transform: scale(1.03);
+    }
+
+    .pricing-card.featured:hover {
+      transform: scale(1.03) translateY(-3px);
+    }
+
+    .pricing-badge {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--teal-light), var(--accent));
+      color: var(--navy);
+      padding: 6px 20px;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .pricing-tier {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+
+    .pricing-price {
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      line-height: 1.1;
+    }
+
+    .pricing-price span {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .pricing-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .pricing-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .pricing-features li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .pricing-features li::before {
+      content: '✓';
+      color: var(--teal-light);
+      font-weight: 700;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    .pricing-note {
+      text-align: center;
+      margin-top: 48px;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      font-style: italic;
+    }
+
+    /* ===================== TECH STACK ===================== */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+      background: var(--gray-200);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 40px;
+    }
+
+    .tech-cell {
+      background: var(--white);
+      padding: 28px 32px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .tech-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--teal-light);
+      margin-bottom: 6px;
+      white-space: nowrap;
+    }
+
+    .tech-value {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .doc-links {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .doc-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--teal-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      padding: 12px 24px;
+      border: 1px solid rgba(20,184,166,0.2);
+      border-radius: 10px;
+    }
+
+    .doc-link:hover {
+      background: rgba(20,184,166,0.05);
+      border-color: rgba(20,184,166,0.4);
+      transform: translateY(-2px);
+    }
+
+    /* ===================== ROADMAP ===================== */
+    .roadmap-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .roadmap-card {
+      background: var(--white);
+      border-radius: var(--card-radius);
+      padding: 36px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--gray-200);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .roadmap-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    .roadmap-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+
+    .roadmap-card.complete::before {
+      background: linear-gradient(90deg, var(--accent), var(--teal-light));
+    }
+
+    .roadmap-card.progress::before {
+      background: linear-gradient(90deg, #f59e0b, #eab308);
+    }
+
+    .roadmap-card.upcoming::before {
+      background: linear-gradient(90deg, var(--gray-300), var(--gray-400));
+    }
+
+    .roadmap-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 16px;
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+
+    .roadmap-card.complete .roadmap-status {
+      background: rgba(6,214,160,0.1);
+      color: #059669;
+    }
+
+    .roadmap-card.progress .roadmap-status {
+      background: rgba(245,158,11,0.1);
+      color: #d97706;
+    }
+
+    .roadmap-card.upcoming .roadmap-status {
+      background: rgba(156,163,175,0.15);
+      color: var(--gray-500);
+    }
+
+    .roadmap-card h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .roadmap-card p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .roadmap-stat {
+      text-align: center;
+      padding: 32px;
+      background: linear-gradient(135deg, rgba(20,184,166,0.05), rgba(6,214,160,0.05));
+      border: 1px solid rgba(20,184,166,0.12);
+      border-radius: var(--card-radius);
+    }
+
+    .roadmap-stat p {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+    }
+
+    .roadmap-stat strong {
+      color: var(--teal-light);
+      font-weight: 800;
+    }
+
+    /* ===================== FOOTER ===================== */
+    .footer {
+      background: var(--navy);
+      color: rgba(255,255,255,0.5);
+      padding: 64px 0 40px;
+      text-align: center;
+    }
+
+    .footer-brand {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--white);
+    }
+
+    .footer-copy {
+      font-size: 0.82rem;
+      margin-bottom: 8px;
+    }
+
+    .footer-tech {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width: 1024px) {
+      .card-grid-3, .pricing-grid, .roadmap-grid, .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .pricing-card.featured {
+        transform: scale(1);
+      }
+
+      .pricing-card.featured:hover {
+        transform: translateY(-3px);
+      }
+    }
+
+    @media (max-width: 768px) {
+      :root {
+        --section-padding: 72px 0;
+      }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(10, 15, 30, 0.97);
+        flex-direction: column;
+        padding: 24px;
+        gap: 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-hamburger {
+        display: flex;
+      }
+
+      .card-grid-3, .card-grid-2, .card-grid-4,
+      .pricing-grid, .roadmap-grid, .metrics-grid,
+      .tech-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+
+      .hero-sub {
+        font-size: 1rem;
+      }
+
+      .trust-badges {
+        gap: 16px;
+      }
+
+      .arch-diagram {
+        padding: 24px 16px;
+      }
+
+      .arch-box {
+        font-size: 0.72rem;
+        padding: 8px 14px;
+      }
+
+      .market-stat .metric-value {
+        font-size: 3rem;
+      }
+
+      .section-header h2 {
+        font-size: 1.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-ctas {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+      }
+
+      .arch-row {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======== NAVIGATION ======== -->
+  <nav class="nav" id="nav">
+    <div class="container">
+      <a href="#" class="nav-logo">
+        <div class="nav-logo-icon">&#9670;</div>
+        OIE
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#solution">Solution</a></li>
+        <li><a href="#capabilities">Capabilities</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#security">Security</a></li>
+        <li><a href="#market">Market</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#documentation">Docs</a></li>
+      </ul>
+      <button class="nav-hamburger" id="hamburger" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ======== HERO ======== -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <div class="hero-badge">186 Files &middot; 20,986 Lines &middot; Customer Ready</div>
+      <h1>Operational<br><span>Intelligence Engine</span></h1>
+      <p class="hero-sub">The complete AI-powered operational intelligence platform. Predictive analytics, no-code rule building, real-time monitoring, workflow automation, and industry-specific packages &mdash; all built, all ready.</p>
+      <div class="hero-ctas">
+        <a href="#capabilities" class="btn btn-primary">See Full Capabilities &#8594;</a>
+        <a href="https://github.com/jmwork4/operational-intelligence-engine" target="_blank" rel="noopener" class="btn btn-secondary">GitHub Repository &#8599;</a>
+      </div>
+      <div class="trust-badges">
+        <span class="trust-badge">Predictive Intelligence</span>
+        <span class="trust-badge">No-Code Rules</span>
+        <span class="trust-badge">4 Industry Verticals</span>
+        <span class="trust-badge">Edge + Cloud</span>
+        <span class="trust-badge">24 Dashboard Pages</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== PROBLEM ======== -->
+  <section class="section section-white" id="problem">
+    <div class="container">
+      <div class="section-header">
+        <h2>The Problem</h2>
+      </div>
+      <div class="card-grid-3">
+        <div class="card problem-card">
+          <div class="card-icon">&#9888;</div>
+          <h3>Operational Blindspots</h3>
+          <p>Companies process thousands of operational events daily across disconnected systems. Critical patterns go undetected until they become costly incidents.</p>
+        </div>
+        <div class="card problem-card">
+          <div class="card-icon">&#128276;</div>
+          <h3>Alert Fatigue</h3>
+          <p>Static threshold alerts flood operations teams. Without intelligent correlation and deduplication, teams waste hours investigating false positives.</p>
+        </div>
+        <div class="card problem-card">
+          <div class="card-icon">&#128274;</div>
+          <h3>Siloed Knowledge</h3>
+          <p>Operational documentation sits unused in file shares. When incidents occur, teams can't quickly access the institutional knowledge they need.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== SOLUTION ======== -->
+  <section class="section section-gray" id="solution">
+    <div class="container">
+      <div class="section-header">
+        <h2>The Solution</h2>
+        <p>OIE transforms raw operational events into intelligent, actionable insights</p>
+      </div>
+      <div class="card-grid-4">
+        <div class="card">
+          <div class="card-icon">&#9889;</div>
+          <h3>Event Intelligence</h3>
+          <p>Ingest up to 10,000 events/second. Redis streams for real-time processing. Webhook receiver with HMAC verification and EDI 204/214/990 parsing.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#9881;</div>
+          <h3>No-Code Rule Engine</h3>
+          <p>Visual drag-and-drop rule builder, 8 pre-built templates, historical simulation. Three rule types with deterministic evaluation &mdash; no eval/exec ever.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#129302;</div>
+          <h3>AI Copilot + Playbooks</h3>
+          <p>Natural language queries with 13 MCP tools. Automated incident playbooks, shift handoff summaries, weekly digests, and what-if analysis.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#128200;</div>
+          <h3>Predictive Intelligence</h3>
+          <p>Anomaly detection with statistical baselines. SLA breach prediction before problems happen. Automated root cause analysis tracing event chains.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== CAPABILITIES ======== -->
+  <section class="section section-white" id="capabilities">
+    <div class="container">
+      <div class="section-header">
+        <h2>Full Platform Capabilities</h2>
+        <p>Everything built. Everything ready. No feature gaps.</p>
+      </div>
+      <div class="card-grid-3">
+        <div class="card">
+          <div class="card-icon">&#128268;</div>
+          <h3>Integrations</h3>
+          <p>Webhook receiver with HMAC verification, field mapping, and EDI 204/214/990 parsing. Outbound to Slack, email, SMS (Twilio), PagerDuty, and Microsoft Teams.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#128684;</div>
+          <h3>Alert Escalation</h3>
+          <p>Multi-stage escalation policies, on-call rotation, alert grouping into incidents, quiet hours, and SLA tracking with time-to-acknowledge and time-to-resolve metrics.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#127919;</div>
+          <h3>No-Code Rule Builder</h3>
+          <p>Visual drag-and-drop condition builder, 8 pre-built templates for common scenarios, and historical rule simulation showing what would have triggered.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#128225;</div>
+          <h3>Real-Time Operations</h3>
+          <p>WebSocket-powered live event feed, real-time KPI counters, alert popup notifications, and fleet/shipment map visualization with status tracking.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#128202;</div>
+          <h3>Reporting &amp; Exports</h3>
+          <p>Automated daily/weekly summaries, SLA compliance reports, CSV/Excel export, and Recharts visualizations for events, alerts, and performance trends.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#128736;</div>
+          <h3>Workflow Automation</h3>
+          <p>Sequential step engine with notify, API call, approval, delay, and AI analysis steps. 3 pre-built templates for critical alerts, SLA breaches, and maintenance.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#127981;</div>
+          <h3>Industry Verticals</h3>
+          <p>Pre-built packages for Logistics (12 events, 10 rules), Healthcare (10 events, 8 rules), Manufacturing (10 events, 8 rules), and Cold Chain (8 events, 8 rules).</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#128421;</div>
+          <h3>Edge Intelligence</h3>
+          <p>Lightweight Python agent for on-site deployment. Local threshold rule evaluation, offline event buffering, and automatic batch sync to cloud on reconnect.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#128100;</div>
+          <h3>Self-Service Portal</h3>
+          <p>Tenant registration, team management with RBAC (Admin/Operator/Viewer), API key generation and rotation, usage dashboards, and billing with plan management.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== ARCHITECTURE ======== -->
+  <section class="section section-white" id="architecture">
+    <div class="container">
+      <div class="section-header">
+        <h2>Built for Scale</h2>
+        <p>Modular architecture that grows from startup to enterprise</p>
+      </div>
+      <div class="arch-diagram">
+        <div class="arch-label">Presentation Layer</div>
+        <div class="arch-row">
+          <div class="arch-box arch-frontend">Next.js 14</div>
+          <div class="arch-box arch-frontend">React 18</div>
+          <div class="arch-box arch-frontend">Tailwind CSS</div>
+          <div class="arch-box arch-frontend">Recharts</div>
+        </div>
+        <div class="arch-connector">&#9661; &#9661; &#9661;</div>
+        <div class="arch-label">API Layer</div>
+        <div class="arch-row">
+          <div class="arch-box arch-api">FastAPI</div>
+          <div class="arch-box arch-api">SQLAlchemy 2.0</div>
+          <div class="arch-box arch-api">Pydantic v2</div>
+          <div class="arch-box arch-api">Alembic</div>
+        </div>
+        <div class="arch-connector">&#9661; &#9661; &#9661;</div>
+        <div class="arch-label">Processing Layer</div>
+        <div class="arch-row">
+          <div class="arch-box arch-worker">ARQ Workers</div>
+          <div class="arch-box arch-worker">APScheduler</div>
+          <div class="arch-box arch-worker">Event Pipeline</div>
+        </div>
+        <div class="arch-connector">&#9661; &#9661; &#9661;</div>
+        <div class="arch-label">Data Layer</div>
+        <div class="arch-row">
+          <div class="arch-box arch-data">PostgreSQL 16</div>
+          <div class="arch-box arch-data">pgvector</div>
+          <div class="arch-box arch-data">Redis 7</div>
+          <div class="arch-box arch-data">MinIO (S3)</div>
+        </div>
+        <div class="arch-connector" style="margin-top: 24px;">&#9670; &#9670; &#9670;</div>
+        <div class="arch-label">AI Pipeline</div>
+        <div class="arch-row">
+          <div class="arch-box arch-ai">Input Guard</div>
+          <div class="arch-box arch-ai">Prompt Registry</div>
+          <div class="arch-box arch-ai">Context Assembly</div>
+          <div class="arch-box arch-ai">13 MCP Tools</div>
+          <div class="arch-box arch-ai">Output Guard</div>
+        </div>
+        <div class="arch-connector">&#9661; &#9661; &#9661;</div>
+        <div class="arch-label">Intelligence Layer</div>
+        <div class="arch-row">
+          <div class="arch-box arch-frontend">Anomaly Detection</div>
+          <div class="arch-box arch-frontend">Predictive Engine</div>
+          <div class="arch-box arch-frontend">Root Cause Analysis</div>
+          <div class="arch-box arch-frontend">Workflow Engine</div>
+        </div>
+        <div class="arch-connector">&#9661; &#9661; &#9661;</div>
+        <div class="arch-label">Integration Layer</div>
+        <div class="arch-row">
+          <div class="arch-box arch-worker">Webhook Receiver</div>
+          <div class="arch-box arch-worker">Slack / Email / SMS</div>
+          <div class="arch-box arch-worker">PagerDuty / Teams</div>
+          <div class="arch-box arch-worker">EDI Parser</div>
+          <div class="arch-box arch-worker">Edge Agent</div>
+        </div>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-value">186</div>
+          <div class="metric-label">Production files</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">20,986</div>
+          <div class="metric-label">Lines of code</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">24</div>
+          <div class="metric-label">Dashboard pages</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">4</div>
+          <div class="metric-label">Industry verticals</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">13</div>
+          <div class="metric-label">AI tools</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">&lt; 5s</div>
+          <div class="metric-label">AI response time</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== SECURITY ======== -->
+  <section class="section section-dark" id="security">
+    <div class="container">
+      <div class="section-header">
+        <h2>Security First, Always</h2>
+      </div>
+      <div class="security-list">
+        <div class="security-item">
+          <div class="security-check">&#10003;</div>
+          <p><strong>Row-Level Security</strong> at the PostgreSQL layer &mdash; tenant isolation can't be bypassed even if application code fails</p>
+        </div>
+        <div class="security-item">
+          <div class="security-check">&#10003;</div>
+          <p><strong>AI Policy Guards</strong> &mdash; input injection detection and output PII/compliance screening on every request</p>
+        </div>
+        <div class="security-item">
+          <div class="security-check">&#10003;</div>
+          <p><strong>Version-controlled prompts</strong> &mdash; no hardcoded AI prompts, full evaluation regression testing</p>
+        </div>
+        <div class="security-item">
+          <div class="security-check">&#10003;</div>
+          <p><strong>Deterministic rule engine</strong> &mdash; expressions are parsed, never executed with eval/exec</p>
+        </div>
+        <div class="security-item">
+          <div class="security-check">&#10003;</div>
+          <p><strong>Complete audit trail</strong> &mdash; every mutation logged with tenant, user, and timestamp</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== MARKET ======== -->
+  <section class="section section-white" id="market">
+    <div class="container">
+      <div class="section-header">
+        <h2>Market Opportunity</h2>
+      </div>
+      <div class="market-stat">
+        <div class="metric-value">$32B+</div>
+        <div class="metric-label">Operational intelligence market by 2028</div>
+      </div>
+      <div class="card-grid-3">
+        <div class="card">
+          <div class="card-icon">&#128666;</div>
+          <h3>Logistics &amp; Transportation</h3>
+          <p>50&ndash;200 vehicle fleets need real-time shipment monitoring, driver coordination, and vendor delay tracking</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#127973;</div>
+          <h3>Healthcare Operations</h3>
+          <p>Patient flow optimization, equipment tracking, compliance monitoring, and incident response</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#9874;</div>
+          <h3>Manufacturing</h3>
+          <p>Production line monitoring, quality control alerts, supply chain visibility, and predictive maintenance</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== PRICING ======== -->
+  <section class="section section-gray" id="pricing">
+    <div class="container">
+      <div class="section-header">
+        <h2>Revenue Model</h2>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-tier">Starter</div>
+          <div class="pricing-price">$50<span>/mo</span></div>
+          <div class="pricing-desc">For small teams getting started</div>
+          <ul class="pricing-features">
+            <li>Up to 500 events/day</li>
+            <li>60 AI queries/min</li>
+            <li>5 users</li>
+            <li>Basic rules + templates</li>
+            <li>1 industry vertical</li>
+            <li>Email notifications</li>
+          </ul>
+        </div>
+        <div class="pricing-card featured">
+          <div class="pricing-badge">Recommended</div>
+          <div class="pricing-tier">Professional</div>
+          <div class="pricing-price">$200<span>/mo</span></div>
+          <div class="pricing-desc">For growing operations teams</div>
+          <ul class="pricing-features">
+            <li>Up to 50K events/day</li>
+            <li>300 AI queries/min</li>
+            <li>25 users</li>
+            <li>No-code rule builder</li>
+            <li>All industry verticals</li>
+            <li>Slack, email, SMS alerts</li>
+            <li>AI playbooks + reports</li>
+            <li>Escalation policies</li>
+            <li>Priority support</li>
+          </ul>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-tier">Enterprise</div>
+          <div class="pricing-price">Custom</div>
+          <div class="pricing-desc">For large-scale deployments</div>
+          <ul class="pricing-features">
+            <li>Unlimited events</li>
+            <li>Custom AI limits</li>
+            <li>Unlimited users</li>
+            <li>Predictive intelligence</li>
+            <li>Edge agent deployment</li>
+            <li>Workflow automation</li>
+            <li>Custom integrations</li>
+            <li>Federated benchmarks</li>
+            <li>Dedicated support + SLA</li>
+          </ul>
+        </div>
+      </div>
+      <p class="pricing-note">Additional revenue streams: Enterprise licensing, vertical SaaS products, operational analytics services</p>
+    </div>
+  </section>
+
+  <!-- ======== TECHNOLOGY STACK ======== -->
+  <section class="section section-white" id="documentation">
+    <div class="container">
+      <div class="section-header">
+        <h2>Technology Stack</h2>
+      </div>
+      <div class="tech-grid">
+        <div class="tech-cell">
+          <div>
+            <div class="tech-label">Backend</div>
+            <div class="tech-value">Python 3.12, FastAPI, SQLAlchemy 2.0, Alembic</div>
+          </div>
+        </div>
+        <div class="tech-cell">
+          <div>
+            <div class="tech-label">Frontend</div>
+            <div class="tech-value">Next.js 14, React 18, Tailwind CSS, Recharts</div>
+          </div>
+        </div>
+        <div class="tech-cell">
+          <div>
+            <div class="tech-label">Database</div>
+            <div class="tech-value">PostgreSQL 16 + pgvector, Redis 7</div>
+          </div>
+        </div>
+        <div class="tech-cell">
+          <div>
+            <div class="tech-label">AI</div>
+            <div class="tech-value">Anthropic Claude, MCP tool servers, policy guards, prompt registry, context assembly, model router</div>
+          </div>
+        </div>
+        <div class="tech-cell">
+          <div>
+            <div class="tech-label">Infrastructure</div>
+            <div class="tech-value">Docker Compose, OpenTelemetry, structlog, ARQ workers, APScheduler</div>
+          </div>
+        </div>
+        <div class="tech-cell">
+          <div>
+            <div class="tech-label">Storage</div>
+            <div class="tech-value">S3-compatible (MinIO), presigned URLs</div>
+          </div>
+        </div>
+      </div>
+      <div class="doc-links">
+        <a href="https://github.com/jmwork4/operational-intelligence-engine/blob/prototype/docs/ARCHITECTURE.md" target="_blank" rel="noopener" class="doc-link">View Full Architecture &#8594;</a>
+        <a href="https://github.com/jmwork4/operational-intelligence-engine/blob/prototype/README.md" target="_blank" rel="noopener" class="doc-link">View README &#8594;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== ROADMAP ======== -->
+  <section class="section section-gray" id="roadmap">
+    <div class="container">
+      <div class="section-header">
+        <h2>Development Roadmap</h2>
+      </div>
+      <div class="roadmap-grid">
+        <div class="roadmap-card complete">
+          <div class="roadmap-status">&#10003; Complete</div>
+          <h3>Phase 1: Foundations</h3>
+          <p>Tenant isolation (RLS), prompt registry, policy guards, context assembly, scheduler, ARQ workers, storage adapter, observability, FastAPI with JWT auth</p>
+        </div>
+        <div class="roadmap-card complete">
+          <div class="roadmap-status">&#10003; Complete</div>
+          <h3>Phase 2: Core Engine</h3>
+          <p>Redis stream event ingestion, recursive descent expression parser, threshold/composite rule evaluation, alert deduplication, embedding pipeline, semantic search</p>
+        </div>
+        <div class="roadmap-card complete">
+          <div class="roadmap-status">&#10003; Complete</div>
+          <h3>Phase 3: AI Layer</h3>
+          <p>4 MCP tool servers (13 tools), ToolCoordinator, AIService with Anthropic Claude integration, multi-round tool use, AI observability dashboard</p>
+        </div>
+      </div>
+      <div class="roadmap-grid" style="margin-top: 16px;">
+        <div class="roadmap-card complete">
+          <div class="roadmap-status">&#10003; Complete</div>
+          <h3>Tier 1: Competitive Moat</h3>
+          <p>Predictive intelligence (anomaly detection, SLA prediction, root cause analysis), integrations framework, no-code rule builder, real-time WebSocket dashboard</p>
+        </div>
+        <div class="roadmap-card complete">
+          <div class="roadmap-status">&#10003; Complete</div>
+          <h3>Tier 2: Differentiation</h3>
+          <p>Alert escalation with on-call rotation, self-service portal with RBAC, reporting with SLA compliance, AI playbooks (incident response, shift handoff, weekly digest)</p>
+        </div>
+        <div class="roadmap-card complete">
+          <div class="roadmap-status">&#10003; Complete</div>
+          <h3>Tier 3: Market Domination</h3>
+          <p>4 industry verticals (Logistics, Healthcare, Manufacturing, Cold Chain), edge intelligence agent, workflow automation engine with pre-built templates</p>
+        </div>
+      </div>
+      <div class="roadmap-stat">
+        <p><strong>186 files</strong> and <strong>20,986+ lines</strong> of production code &mdash; all phases and tiers complete</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== FOOTER ======== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-brand">Operational Intelligence Engine</div>
+      <div class="footer-links">
+        <a href="https://github.com/jmwork4/operational-intelligence-engine" target="_blank" rel="noopener">GitHub Repository</a>
+        <a href="#documentation">Documentation</a>
+        <a href="https://github.com/jmwork4/operational-intelligence-engine/blob/prototype/docs/ARCHITECTURE.md" target="_blank" rel="noopener">Architecture</a>
+      </div>
+      <p class="footer-copy">&copy; 2026 OIE. All rights reserved.</p>
+      <p class="footer-tech">Built with Python, FastAPI, Next.js, PostgreSQL, and Claude AI</p>
+    </div>
+  </footer>
+
+  <!-- ======== MINIMAL JS ======== -->
+  <script>
+    // Nav scroll effect
+    const nav = document.getElementById('nav');
+    let lastScroll = 0;
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 60) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    }, { passive: true });
+
+    // Mobile hamburger toggle
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+    hamburger.addEventListener('click', function() {
+      navLinks.classList.toggle('open');
+    });
+
+    // Close mobile nav on link click
+    navLinks.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        navLinks.classList.remove('open');
+      });
+    });
+  </script>
+</body>
+</html>
