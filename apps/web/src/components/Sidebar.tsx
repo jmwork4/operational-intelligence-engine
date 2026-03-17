@@ -11,6 +11,13 @@ import {
   Sparkles,
   BarChart3,
   Settings,
+  Shield,
+  FileBarChart,
+  Radio,
+  MapPin,
+  BookOpen,
+  Layers,
+  Workflow,
 } from "lucide-react";
 import clsx from "clsx";
 
@@ -20,8 +27,15 @@ const navItems = [
   { label: "Rules", icon: GitBranch, href: "/rules" },
   { label: "Alerts", icon: Bell, href: "/alerts" },
   { label: "Documents", icon: FileText, href: "/documents" },
+  { label: "Live Ops", icon: Radio, href: "/live" },
+  { label: "Map", icon: MapPin, href: "/map" },
   { label: "AI Copilot", icon: Sparkles, href: "/ai-copilot" },
   { label: "AI Observability", icon: BarChart3, href: "/ai-observability" },
+  { label: "Playbooks", icon: BookOpen, href: "/playbooks" },
+  { label: "Verticals", icon: Layers, href: "/verticals" },
+  { label: "Workflows", icon: Workflow, href: "/workflows" },
+  { label: "Reports", icon: FileBarChart, href: "/reports" },
+  { label: "Admin", icon: Shield, href: "/admin" },
   { label: "Settings", icon: Settings, href: "/settings" },
 ];
 

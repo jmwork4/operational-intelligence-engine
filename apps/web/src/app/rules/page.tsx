@@ -22,6 +22,8 @@ const severityStyles: Record<string, string> = {
   low: "bg-gray-100 text-gray-600",
 };
 
+import Link from "next/link";
+
 export default function RulesPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -32,9 +34,49 @@ export default function RulesPage() {
             156 active rules &middot; 23 triggered today
           </p>
         </div>
-        <button className="px-4 py-2 bg-teal-600 text-white text-sm font-medium rounded-lg hover:bg-teal-700 transition-colors">
+        <Link
+          href="/rules/builder"
+          className="px-4 py-2 bg-teal-600 text-white text-sm font-medium rounded-lg hover:bg-teal-700 transition-colors"
+        >
           Create Rule
-        </button>
+        </Link>
+      </div>
+
+      {/* Quick links */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Link
+          href="/rules/builder"
+          className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow group"
+        >
+          <h3 className="text-sm font-semibold text-gray-900 group-hover:text-teal-600 transition-colors">
+            Rule Builder
+          </h3>
+          <p className="text-xs text-gray-500 mt-1">
+            Create rules visually with the no-code builder
+          </p>
+        </Link>
+        <Link
+          href="/rules/templates"
+          className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow group"
+        >
+          <h3 className="text-sm font-semibold text-gray-900 group-hover:text-teal-600 transition-colors">
+            Templates
+          </h3>
+          <p className="text-xs text-gray-500 mt-1">
+            Start from pre-built rule templates
+          </p>
+        </Link>
+        <Link
+          href="/rules/simulate"
+          className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow group"
+        >
+          <h3 className="text-sm font-semibold text-gray-900 group-hover:text-teal-600 transition-colors">
+            Simulate
+          </h3>
+          <p className="text-xs text-gray-500 mt-1">
+            Test rules against historical data
+          </p>
+        </Link>
       </div>
 
       {/* Rules grid */}

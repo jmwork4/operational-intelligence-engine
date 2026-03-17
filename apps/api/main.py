@@ -28,7 +28,20 @@ from packages.observability import (
 from packages.schemas import ErrorResponse, HealthResponse
 
 from apps.api.middleware import TenantMiddleware
-from apps.api.routes import ai, alerts, auth_routes, documents, events, rules, tenants
+from apps.api.routes import (
+    ai,
+    alerts,
+    auth_routes,
+    documents,
+    events,
+    integrations,
+    reports,
+    rules,
+    tenants,
+    verticals,
+    webhooks,
+    websocket,
+)
 
 logger = get_logger(__name__)
 
@@ -135,6 +148,11 @@ app.include_router(documents.router, prefix=settings.API_V1_PREFIX)
 app.include_router(ai.router, prefix=settings.API_V1_PREFIX)
 app.include_router(tenants.router, prefix=settings.API_V1_PREFIX)
 app.include_router(auth_routes.router, prefix=settings.API_V1_PREFIX)
+app.include_router(webhooks.router, prefix=settings.API_V1_PREFIX)
+app.include_router(integrations.router, prefix=settings.API_V1_PREFIX)
+app.include_router(reports.router, prefix=settings.API_V1_PREFIX)
+app.include_router(verticals.router, prefix=settings.API_V1_PREFIX)
+app.include_router(websocket.router)
 
 
 # -- Root health endpoint --------------------------------------------------
