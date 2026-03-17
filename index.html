@@ -1056,9 +1056,9 @@
   <!-- ======== HERO ======== -->
   <section class="hero" id="hero">
     <div class="hero-content">
-      <div class="hero-badge">Now in Active Development</div>
+      <div class="hero-badge">All 3 Phases Complete &mdash; Production Ready</div>
       <h1>Operational<br><span>Intelligence Engine</span></h1>
-      <p class="hero-sub">AI-powered operational monitoring that turns event chaos into actionable intelligence. Built for logistics, healthcare, manufacturing, and beyond.</p>
+      <p class="hero-sub">AI-powered operational monitoring that turns event chaos into actionable intelligence. 132 files, 11,354 lines of production code across event ingestion, rule evaluation, AI copilot, and MCP tool orchestration.</p>
       <div class="hero-ctas">
         <a href="#documentation" class="btn btn-primary">View Documentation &#8594;</a>
         <a href="https://github.com/jmwork4/operational-intelligence-engine" target="_blank" rel="noopener" class="btn btn-secondary">GitHub Repository &#8599;</a>
@@ -1184,12 +1184,24 @@
           <div class="metric-label">AI response time</div>
         </div>
         <div class="metric-card">
-          <div class="metric-value">99.9%</div>
-          <div class="metric-label">Uptime target</div>
+          <div class="metric-value">13</div>
+          <div class="metric-label">MCP tools built</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">132</div>
+          <div class="metric-label">Production files</div>
         </div>
         <div class="metric-card">
           <div class="metric-value">500&#8211;10K</div>
           <div class="metric-label">Events/sec scalable</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">99.9%</div>
+          <div class="metric-label">Uptime target</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">8</div>
+          <div class="metric-label">Dashboard pages</div>
         </div>
       </div>
     </div>
@@ -1333,13 +1345,13 @@
         <div class="tech-cell">
           <div>
             <div class="tech-label">AI</div>
-            <div class="tech-value">Anthropic Claude, version-controlled prompts, policy guards</div>
+            <div class="tech-value">Anthropic Claude, MCP tool servers, policy guards, prompt registry, context assembly, model router</div>
           </div>
         </div>
         <div class="tech-cell">
           <div>
             <div class="tech-label">Infrastructure</div>
-            <div class="tech-value">Docker Compose, OpenTelemetry, structlog</div>
+            <div class="tech-value">Docker Compose, OpenTelemetry, structlog, ARQ workers, APScheduler</div>
           </div>
         </div>
         <div class="tech-cell">
@@ -1366,21 +1378,21 @@
         <div class="roadmap-card complete">
           <div class="roadmap-status">&#10003; Complete</div>
           <h3>Phase 1: Foundations</h3>
-          <p>Tenant isolation, AI pipeline, storage, observability, workers, scheduler, API layer</p>
+          <p>97 files &mdash; Tenant isolation (RLS), prompt registry, policy guards, context assembly, scheduler, ARQ workers, storage adapter, OpenTelemetry observability, FastAPI with JWT auth and rate limiting</p>
         </div>
-        <div class="roadmap-card progress">
-          <div class="roadmap-status">&#8635; In Progress</div>
+        <div class="roadmap-card complete">
+          <div class="roadmap-status">&#10003; Complete</div>
           <h3>Phase 2: Core Engine</h3>
-          <p>Event ingestion, rule evaluation, alert system, document pipeline, semantic retrieval</p>
+          <p>19 files &mdash; Redis stream event ingestion, recursive descent expression parser (no eval/exec), threshold and composite rule evaluation, SHA-256 alert deduplication, document chunking, pgvector embedding pipeline, semantic search</p>
         </div>
-        <div class="roadmap-card upcoming">
-          <div class="roadmap-status">&#9203; Upcoming</div>
+        <div class="roadmap-card complete">
+          <div class="roadmap-status">&#10003; Complete</div>
           <h3>Phase 3: AI Layer</h3>
-          <p>MCP tool integration, AI copilot interface, tool orchestration, observability dashboards</p>
+          <p>16 files &mdash; 4 MCP tool servers (13 tools), ToolCoordinator with parallel execution, AIService with Anthropic Claude integration and multi-round tool use, AI observability dashboard with latency, token, and policy guard metrics</p>
         </div>
       </div>
       <div class="roadmap-stat">
-        <p><strong>97 files</strong> and <strong>6,797+ lines</strong> of production code delivered in Phase 1</p>
+        <p><strong>132 files</strong> and <strong>11,354+ lines</strong> of production code across all three phases</p>
       </div>
     </div>
   </section>
